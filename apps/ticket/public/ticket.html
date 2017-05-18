@@ -1,0 +1,76 @@
+<div class="page-header">
+    <div class="pull-right">
+        <button b:onclick="saveTicket()" type="button" class="btn btn-primary btn-lg">Save</button>
+    </div>
+    <h1>Ticket</h1>
+    <p style="text-align: right;height: 14px;padding-top: 4px">
+        <span b:bind="status" style="align:center" ></span>
+        <span b:bind="error"  style="color: red;align:center" ></span>
+    </p>
+
+ </div>
+
+
+<form class="form-horizontal" role="form">
+
+    <div class="form-group">
+        <b:textfield b:bind="ticket.title" id="title" lcols="2" fcols="10" text="Title" label="Title" focus="1"></b:textfield>
+    </div>
+
+    <div class="form-group">
+        <b:memofield b:bind="ticket.description" id="title" lcols="2" fcols="10" text="Description" label="Description"></b:memofield>
+    </div>
+
+    <div class="form-group" b:showif="ticket.creator">
+        <b:staticfield b:bind="ticket.created" id="created" lcols="2" fcols="4" label="Created"></b:staticfield>
+        <b:staticfield b:bind="ticket.creator.firstName + ' ' + ticket.creator.lastName" id="lastName" lcols="2" fcols="4" label="Last Name"></b:staticfield>
+    </div>
+
+    <div class="form-group">
+        <b:objectselectfield b:bind="ticket.project" id="project" lcols="2" fcols="4" label="Project" values="projectsGet()" text="name" empty="none" b:onchange="if(!ticket.project){ticket.release=null}"></b:objectselectfield>
+    </div>
+
+</form>
+
+<b:if test="ticket.created">
+    <div class="page-header">
+        <div class="pull-right">
+            <button b:onclick="addComment()" type="button" class="btn btn-primary btn-lg">Add Comment</button>
+        </div>
+        <h1>Ticket Activity</h1></div>
+    </div>
+
+    <form class="form-horizontal" role="form">
+
+        <div class="form-group" b:show="false">
+            <b:memofield b:bind="comment" id="comment" lcols="2" fcols="10" text="Comment" label="Comment" onenter="ticket.addComment(comment);comment=''"></b:memofield>
+        </div>
+
+
+    </form>
+
+    <div class="page-header">
+    </div>
+
+    <div class="container">
+        <table class="table" b:showif="ticket.ticketItemsGet().length > 0">
+            <thead>
+            <tr>
+                <th>Created</th>
+                <th>By</th>
+                <th>Comment</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr b:iterateon="ticket.ticketItems" b:iteratewith="row">
+                <td b:bind="row.created" b:format="formatDateTime()"></td>
+                <td b:bind="row.creator.getFullName()"></td>
+                <td>
+                    <span b:bind="row.text"></span>
+                </td>
+
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</b:if>
